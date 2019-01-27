@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
 
 #include "GPXExtract.h"
+#include "GPXInterp.h"
+#include "GPXConstruct.h"
 #include "Config.h"
 
 using namespace std;
@@ -18,8 +20,12 @@ int main() {
 	routeExtract.extractEles = true;
 	routeExtract.extract();
 
+	gpxinterp::GPXInterp::interp(runExtract, routeExtract);
+	gpxinterp::GPXConstruct::construct(runExtract, routeExtract);
 
+	tinyxml2::XMLPrinter printer;
+	runExtract.doc.Print(&printer);
+	cout << printer.CStr() << endl;
 
-	int a = 1;
-	return a;
+	return 0;
 }
