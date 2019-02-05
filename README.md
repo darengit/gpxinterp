@@ -3,7 +3,11 @@
 I hacked this program to smooth and interpolate spotty strava data
 so that it matches exactly to a strava route
 
-the program is in C++ meant for Linux, essentially a script
+the program is in C++ meant for Linux
+
+its essentially a script so C++ was overkill
+
+i copied tinyxml2.cpp and tinyxml2.h from an existing project
 
 you need Linux and GCC version 5.x, something with C++14 would be safe
 
