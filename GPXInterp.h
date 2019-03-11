@@ -116,13 +116,37 @@ public:
 			}
 
 		}
-/*	
-		routeExtract.lats.push_back(routeExtract.lats.back());
-		routeExtract.lons.push_back(routeExtract.lons.back());
-		routeExtract.times.push_back(routeExtract.times.back());
-		if(routeExtract.extractEles)
-			routeExtract.elevations.push_back(routeExtract.elevations.back());
-*/
+
+		return;
+	}
+
+	static void interp(GPXExtract& routeExtract, const char *start, const char *end) {
+		struct tm st, en;
+		char *res = strptime(start, "%FT%T%z", &st);
+		assert(res);
+		char *res1 = strptime(end, "%FT%T%z", &en);
+		assert(res1);
+
+		time_t gmStart = timegm(&st), gmEnd=timegm(&en);
+		assert(gmStart!=-1 && gmEnd!=-1);
+
+		time_t totTime = gmEnd - gmStart;
+
+		double totDist = 0;
+
+		for(size_t i=1; i<routeExtract.lats.size(); ++i) {
+			totDist += distanceEarth(routeExtract.lats[i-1], routeExtract.lons[i-1], routeExtract.lats[i], routeExtract.lons[i]);
+		}
+
+		assert(routeExtract.times.empty());
+
+		routeExtract.times.push_back(gmStart);
+		double runDist = 0;
+
+		for(size_t i=1; i<routeExtract.lats.size(); ++i) {
+			runDist += distanceEarth(routeExtract.lats[i-1], routeExtract.lons[i-1], routeExtract.lats[i], routeExtract.lons[i]);
+			routeExtract.times.push_back(runDist/totDist*totTime + gmStart);
+		}
 
 		return;
 	}

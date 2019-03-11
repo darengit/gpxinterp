@@ -10,7 +10,7 @@ namespace gpxinterp {
 
 class GPXExtract {
 public:
-	GPXExtract(const char *fileFullPath):xmlFileFullPath(fileFullPath){}
+	GPXExtract(const char *fileFullPath, size_t rep=1):xmlFileFullPath(fileFullPath), repeat(rep){}
 
 	string xmlFileFullPath;
 	tinyxml2::XMLDocument doc;
@@ -26,6 +26,8 @@ public:
 	bool extractTimes = false;
 	vector<double> elevations;
 	bool extractEles = false;
+
+	size_t repeat;
 
 	void extract() {
 		tinyxml2::XMLError res = doc.LoadFile(xmlFileFullPath.c_str());
@@ -74,6 +76,20 @@ public:
 
 				times.push_back(t2);
 			}	
+		}
+
+		// doesn't make sense to repeat a loop from extracted times
+		assert(!extractTimes || repeat==1);
+
+		auto tmpLats = lats;
+		auto tmpLons = lons;
+		auto tmpElevations = elevations;
+		for(size_t i=1; i<repeat; ++i) {
+			for(size_t j=1; j<tmpLats.size(); ++j) {
+				lats.push_back(tmpLats[j]);
+				lons.push_back(tmpLons[j]);
+				if(extractEles) elevations.push_back(tmpElevations[j]);
+			}
 		}
     }
 };
